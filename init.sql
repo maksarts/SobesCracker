@@ -12,18 +12,18 @@ create table if not exists subscriber(
                                          nickname varchar(50),
                                          name varchar(50),
                                          chat_id varchar(50) not null,
+                                         type varchar(50) not null,
                                          created_at timestamp with time zone
 );
 
 create table if not exists excluded_question(
-                                                id uuid primary key not null,
                                                 user_id uuid not null,
                                                 question_id uuid not null,
-                                                created_at timestamp with time zone
+                                                primary key (user_id, question_id)
 );
 
 create table if not exists settings(
                                        id uuid primary key not null,
-                                       user_id uuid not null,
+                                       user_id uuid unique not null,
                                        setting jsonb
 );

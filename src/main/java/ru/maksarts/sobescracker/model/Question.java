@@ -7,14 +7,18 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Table(name = "question")
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Question {
     @Id
     @UuidGenerator
@@ -41,7 +45,9 @@ public class Question {
     @CreationTimestamp
     private Date createdAt;
 
-
+    @ManyToMany(mappedBy = "excludedQuestions", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private Set<Subscriber> subscribers = new HashSet<>();
 
     @PostLoad
     void fillTransient() {
