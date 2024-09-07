@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  taskservice:
+  sobescracker:
     image: ghcr.io/maksarts/sobescracker:latest
     container_name: sobescracker
     depends_on:
