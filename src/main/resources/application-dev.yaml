@@ -1,0 +1,17 @@
+spring:
+  main:
+    allow-bean-definition-overriding: false
+  application:
+    name: SobesCracker
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        ddl-auto: update
+
+server:
+  port: 8080
