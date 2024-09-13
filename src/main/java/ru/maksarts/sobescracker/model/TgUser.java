@@ -13,38 +13,34 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "subscriber")
+@Table(name = "tg_user")
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Subscriber {
+public class TgUser {
     @Id
     @UuidGenerator
     @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
-    @Column(name = "nickname", nullable = false)
+    @Column(name = "nickname")
     private String nickname;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     private String name;
 
     @Column(name = "chat_id", nullable = false)
     private String chatId;
-
-    @Column(name = "type", nullable = false)
-    private String type;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
     private Date createdAt;
 
-    @ManyToMany(cascade = { CascadeType.ALL },
-                fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @Fetch(FetchMode.JOIN)
     @JoinTable(
             name = "excluded_question",

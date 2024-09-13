@@ -1,14 +1,13 @@
 package ru.maksarts.sobescracker.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -31,11 +30,14 @@ public class Question {
     @Column(name = "answer", nullable = false)
     private String answer;
 
-    @Column(name = "type", nullable = false)
-    private String type;
+    @OneToOne(fetch = FetchType.LAZY)
+    @Fetch(FetchMode.JOIN)
+    @JoinColumn(name = "type", referencedColumnName = "id", nullable = false)
+    private Type type;
 
     @Transient
     private QuestionGrade grade;
+
     @Basic(optional = false)
     @Column(name = "grade", nullable = false)
     private Integer gradeValue; // needed to correct representation ENUM values in DB
@@ -45,9 +47,6 @@ public class Question {
     @CreationTimestamp
     private Date createdAt;
 
-    @ManyToMany(mappedBy = "excludedQuestions", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private Set<Subscriber> subscribers = new HashSet<>();
 
     @PostLoad
     void fillTransient() {

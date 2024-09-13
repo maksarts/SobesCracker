@@ -2,6 +2,8 @@ package ru.maksarts.sobescracker.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
@@ -22,8 +24,9 @@ public class Settings {
     private UUID id;
 
     @OneToOne(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    private Subscriber userId;
+    private TgUser userId;
 
     @Column(name = "setting", nullable = false)
     @JdbcTypeCode(SqlTypes.JSON)
