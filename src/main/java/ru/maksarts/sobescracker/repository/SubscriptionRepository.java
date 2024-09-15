@@ -12,11 +12,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface SubscriptionRepository extends JpaRepository<Subscription, UUID> {
-    @EntityGraph(type = EntityGraph.EntityGraphType.FETCH,
-                attributePaths = {"user_id", "course_id"})
     List<Subscription> getSubscriptionByTgUser(TgUser tgUser);
-
-    @EntityGraph(type = EntityGraph.EntityGraphType.FETCH,
-            attributePaths = {"user_id", "course_id"})
     List<Subscription> getSubscriptionByCourse(Course course);
 }

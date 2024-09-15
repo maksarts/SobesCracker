@@ -2,7 +2,6 @@ package ru.maksarts.sobescracker.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.maksarts.sobescracker.model.Settings;
-import ru.maksarts.sobescracker.model.Subscription;
 import ru.maksarts.sobescracker.model.TgUser;
 
 import java.util.Optional;

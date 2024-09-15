@@ -13,5 +13,15 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         ddl-auto: update
 
+        format_sql: true
+        show-sql: true
+        use_sql_comments: true
+        type: trace
+
 server:
   port: 8080
+
+logging:
+  level:
+    sql: trace
+    org.hibernate.orm.jdbc.bind: trace
