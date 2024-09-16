@@ -13,5 +13,15 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         ddl-auto: update
 
+telegram-api:
+  token:
+    main: ${TELEGRAM_MAIN_TOKEN}
+    log: ${TELEGRAM_LOG_TOKEN}
+    admin: ${TELEGRAM_ADMIN_TOKEN}
+  username:
+    main: ${TELEGRAM_MAIN_USERNAME}
+    log: ${TELEGRAM_LOG_USERNAME}
+    admin: ${TELEGRAM_ADMIN_USERNAME}
+
 server:
   port: 8080
