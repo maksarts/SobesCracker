@@ -7,6 +7,8 @@ import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import ru.maksarts.sobescracker.constants.TgRequestMethod;
+import ru.maksarts.sobescracker.dto.telegram.Message;
 import ru.maksarts.sobescracker.dto.telegram.TelegramResponse;
 import ru.maksarts.sobescracker.dto.telegram.Update;
 
@@ -31,7 +33,7 @@ public abstract class LongPoolingTelegramBot {
         this.lastReceivedUpdate = (long) -1;
         this.restTemplate = restTemplate;
 
-        getUpdatesUrl = UriComponentsBuilder.fromHttpUrl(apiUrl + TelegramRequestMethod.GET_UPDATES)
+        getUpdatesUrl = UriComponentsBuilder.fromHttpUrl(apiUrl + TgRequestMethod.GET_UPDATES)
                 .queryParam("limit", this.limit)
                 .queryParam("offset", lastReceivedUpdate + 1)
                 .toUriString();
@@ -40,7 +42,7 @@ public abstract class LongPoolingTelegramBot {
     @Scheduled(fixedRate = 1)
     protected void getUpdates(){
 
-        String url = UriComponentsBuilder.fromHttpUrl(apiUrl + TelegramRequestMethod.GET_UPDATES)
+        String url = UriComponentsBuilder.fromHttpUrl(apiUrl + TgRequestMethod.GET_UPDATES)
                 .queryParam("limit", this.limit)
                 .queryParam("offset", lastReceivedUpdate + 1)
                 .toUriString();
@@ -51,6 +53,8 @@ public abstract class LongPoolingTelegramBot {
                 List<Update> updates = response.getBody().getResult();
                 for (Update update : updates) {
                     log.trace("Incoming update: {}", update.toString());
+
+                    ifCommand(update);
 
                     // handle
                     handle(update);
@@ -63,6 +67,18 @@ public abstract class LongPoolingTelegramBot {
             log.debug("Cannot get updates: ok={}, description={}",
                     response.getBody() == null ? "[body=null]" : response.getBody().getOk(),
                     response.getBody() == null ? "[body=null]" : response.getBody().getDescription());
+        }
+    }
+
+    private void ifCommand(Update update) {
+        if(update.getMessage() != null){
+            Message message = update.getMessage();
+            String text = message.getText();
+            if(text.startsWith("/")){
+                message.setIsCommand(true);
+            } else{
+                message.setIsCommand(false);
+            }
         }
     }
 

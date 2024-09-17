@@ -4,7 +4,7 @@ create table if not exists tg_user(
                                       id uuid primary key not null,
                                       nickname varchar(50),
                                       name text,
-                                      chat_id varchar(50) not null,
+                                      chat_id int not null,
                                       created_at timestamp with time zone
 );
 

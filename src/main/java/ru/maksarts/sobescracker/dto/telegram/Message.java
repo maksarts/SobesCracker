@@ -12,4 +12,5 @@ public class Message implements Serializable {
     private From from;
     private Long message_id;
     private String text;
+    private Boolean isCommand;
 }
