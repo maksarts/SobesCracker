@@ -21,4 +21,6 @@ public class AdminBotController extends LongPoolingTelegramBot{
     protected void handle(Update update) {
         log.info("[ADMIN] Update handled: message=[{}]", update.getMessage());
     }
+
+    //TODO сделать рассылку всем пользователям мануально из админского бота
 }

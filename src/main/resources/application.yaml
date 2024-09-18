@@ -14,6 +14,7 @@ spring:
         ddl-auto: update
 
 telegram-api:
+  log-chat-id: ${TELEGRAM_LOG_CHAT_ID}
   token:
     main: ${TELEGRAM_MAIN_TOKEN}
     log: ${TELEGRAM_LOG_TOKEN}

@@ -13,6 +13,8 @@ import ru.maksarts.sobescracker.service.MainBotService;
 public class MainBotController extends LongPoolingTelegramBot {
 
     @Autowired
+    LogBotController botLogger;
+    @Autowired
     MainBotService mainBotService;
 
     @Autowired
@@ -21,7 +23,7 @@ public class MainBotController extends LongPoolingTelegramBot {
         super(token, 100, restTemplate);
     }
 
-    private void sendMessage(Object answer, Long chatId){ // kafka listener
+    private void sendAnswer(Object answer, Long chatId){ // kafka listener
         // send answer
     }
 
