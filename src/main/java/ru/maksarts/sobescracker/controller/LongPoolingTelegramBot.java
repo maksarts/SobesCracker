@@ -1,17 +1,22 @@
 package ru.maksarts.sobescracker.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import ru.maksarts.sobescracker.constants.TgFormat;
 import ru.maksarts.sobescracker.constants.TgRequestMethod;
 import ru.maksarts.sobescracker.dto.telegram.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -81,7 +86,7 @@ public abstract class LongPoolingTelegramBot {
                     ifCommand(update);
 
                     // handle
-                    handle(update);
+                    handle(update); //TODO если не получилось схендлить сделать ограниченное количество ретраев
 
                     lastReceivedUpdate = update.getUpdate_id();
                 }
@@ -107,16 +112,16 @@ public abstract class LongPoolingTelegramBot {
     }
 
 
-    public void sendMessage(String text, String chatId, Boolean markdown){
-        sendMessage(text, chatId, markdown, null);
+    public ResponseEntity<?> sendMessage(String text, String chatId, TgFormat parseMode){
+        return sendMessage(text, chatId, parseMode, null);
     }
-    public void sendMessage(String text, String chatId, Integer replyMessageId){
-        sendMessage(text, chatId, true, replyMessageId);
+    public ResponseEntity<?> sendMessage(String text, String chatId, Integer replyMessageId){
+        return sendMessage(text, chatId, null, replyMessageId);
     }
-    public void sendMessage(String text, String chatId){
-        sendMessage(text, chatId, true, null);
+    public ResponseEntity<?> sendMessage(String text, String chatId){
+        return sendMessage(text, chatId, null, null);
     }
-    public ResponseEntity<?> sendMessage(String text, String chatId, boolean markdown, Integer replyMessageId){
+    public ResponseEntity<?> sendMessage(String text, String chatId, TgFormat parseMode, Integer replyMessageId){
         ReplyParameters replyParameters = null;
         if(replyMessageId != null){
             replyParameters = ReplyParameters.builder()
@@ -128,12 +133,16 @@ public abstract class LongPoolingTelegramBot {
         SendMessage msg = SendMessage.builder()
                 .chat_id(chatId)
                 .text(text)
-                .parse_mode(markdown ? "MarkdownV2" : null)
+                .parse_mode(parseMode == null ? null : parseMode.getTag())
                 .reply_parameters(replyParameters)
                 .build();
 
+        return sendMessage(msg);
+    }
+    public ResponseEntity<?> sendMessage(SendMessage msg){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setContentLanguage(Locale.forLanguageTag("ru-RU"));
         HttpEntity<SendMessage> request = new HttpEntity<>(msg, headers);
         return restTemplate.postForEntity(sendMessageUrl, request, String.class);
     }

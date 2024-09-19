@@ -28,6 +28,9 @@ public class Course  implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "description", nullable = true)
+    private String description;
+
     @Transient
     private QuestionGrade minGrade;
 

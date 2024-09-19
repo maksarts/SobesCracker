@@ -38,7 +38,8 @@ create table if not exists settings(
 
 create table if not exists course(
                                      id uuid primary key not null,
-                                     name varchar(50) not null unique,
+                                     name text not null unique,
+                                     description text,
                                      min_grade int,
                                      max_grade int
 );
