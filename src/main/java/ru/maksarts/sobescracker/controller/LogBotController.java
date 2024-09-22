@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 import ru.maksarts.sobescracker.constants.TgFormat;
 import ru.maksarts.sobescracker.constants.TgLogLevel;
+import ru.maksarts.sobescracker.dto.telegram.SendMessage;
 import ru.maksarts.sobescracker.dto.telegram.Update;
 
 import java.util.HashMap;
@@ -50,7 +51,7 @@ public class LogBotController extends LongPoolingTelegramBot {
     @Override
     protected void handle(Update update) {
 //        log.info("[LOGGER] Update handled: message=[{}]", update.getMessage());
-        if(update.getMessage().getIsCommand()){
+        if(update.getMessage().getChat().getId().toString().equals(logChatId) && update.getMessage().getIsCommand()){
             handleCommand(update);
         }
     }
@@ -58,7 +59,7 @@ public class LogBotController extends LongPoolingTelegramBot {
     public void log(String text, TgLogLevel level){
         log(text, level, null);
     }
-    public void log(String text, TgLogLevel level, Exception ex){
+    public void log(String text, TgLogLevel level, Throwable ex){
         if(level.compareTo(logLevel) < 0) return;
 
         if(ex == null) {

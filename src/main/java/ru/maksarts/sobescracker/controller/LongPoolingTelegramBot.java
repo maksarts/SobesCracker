@@ -63,11 +63,13 @@ public abstract class LongPoolingTelegramBot {
     }
 
 
+
+
     protected abstract void handle(Update update);
 
 
 
-    @Scheduled(fixedRate = 1)
+    @Scheduled(fixedDelay = 10)
     protected void getUpdates(){
         Map<String, Object> params = new HashMap<>();
         params.put("offset", lastReceivedUpdate + 1);
@@ -85,8 +87,14 @@ public abstract class LongPoolingTelegramBot {
 
                     ifCommand(update);
 
-                    // handle
-                    handle(update); //TODO если не получилось схендлить сделать ограниченное количество ретраев
+                    try {
+
+                        // handle
+                        handle(update);
+
+                    } catch (Exception ex){
+                        log.error("Cannot handle update with id={} because of: {}", update.getUpdate_id(), ex.getMessage(), ex);
+                    }
 
                     lastReceivedUpdate = update.getUpdate_id();
                 }
@@ -112,16 +120,16 @@ public abstract class LongPoolingTelegramBot {
     }
 
 
-    public ResponseEntity<?> sendMessage(String text, String chatId, TgFormat parseMode){
+    protected ResponseEntity<?> sendMessage(String text, String chatId, TgFormat parseMode){
         return sendMessage(text, chatId, parseMode, null);
     }
-    public ResponseEntity<?> sendMessage(String text, String chatId, Integer replyMessageId){
+    protected ResponseEntity<?> sendMessage(String text, String chatId, Integer replyMessageId){
         return sendMessage(text, chatId, null, replyMessageId);
     }
-    public ResponseEntity<?> sendMessage(String text, String chatId){
+    protected ResponseEntity<?> sendMessage(String text, String chatId){
         return sendMessage(text, chatId, null, null);
     }
-    public ResponseEntity<?> sendMessage(String text, String chatId, TgFormat parseMode, Integer replyMessageId){
+    protected ResponseEntity<?> sendMessage(String text, String chatId, TgFormat parseMode, Integer replyMessageId){
         ReplyParameters replyParameters = null;
         if(replyMessageId != null){
             replyParameters = ReplyParameters.builder()
@@ -139,7 +147,8 @@ public abstract class LongPoolingTelegramBot {
 
         return sendMessage(msg);
     }
-    public ResponseEntity<?> sendMessage(SendMessage msg){
+
+    protected ResponseEntity<?> sendMessage(SendMessage msg){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setContentLanguage(Locale.forLanguageTag("ru-RU"));

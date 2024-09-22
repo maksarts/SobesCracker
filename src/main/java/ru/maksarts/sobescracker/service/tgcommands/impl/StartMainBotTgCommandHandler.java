@@ -1,5 +1,6 @@
 package ru.maksarts.sobescracker.service.tgcommands.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.network.Send;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +19,11 @@ import java.util.Optional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class StartMainBotTgCommandHandler implements MainBotTgCommandHandler {
 
-    @Autowired
-    MessageSource messages;
-    @Autowired
-    TgUserRepository tgUserRepository;
+    private final MessageSource messages;
+    private final TgUserRepository tgUserRepository;
 
     @Override
     public String getCommand() {

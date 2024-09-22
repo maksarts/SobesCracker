@@ -1,6 +1,6 @@
 package ru.maksarts.sobescracker.service.tgcommands.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.maksarts.sobescracker.constants.TgFormat;
 import ru.maksarts.sobescracker.dto.telegram.ReplyParameters;
@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CommandsMainBotTgCommandHandler implements MainBotTgCommandHandler {
+@RequiredArgsConstructor
+public class CoursesMainBotTgCommandHandler implements MainBotTgCommandHandler {
 
-    @Autowired
-    private CourseRepository courseRepository;
+    private final CourseRepository courseRepository;
 
     @Override
     public String getCommand() {
@@ -47,12 +47,11 @@ public class CommandsMainBotTgCommandHandler implements MainBotTgCommandHandler 
 
     private String buildAnswer(List<Course> courses){
         StringBuilder builder = new StringBuilder();
-        courses.forEach(course -> {
-            builder.append("<b>").append(course.getName()).append(":").append("</b>")
-                    .append("\n")
-                    .append(course.getDescription())
-                    .append("\n\n");
-        });
+        courses.forEach(course -> builder
+                .append("<b>").append(course.getName()).append(":").append("</b>")
+                .append("\n")
+                .append(course.getDescription())
+                .append("\n\n"));
         return builder.toString();
     }
 }

@@ -15,15 +15,16 @@ import java.util.Optional;
 @Slf4j
 public class MainBotController extends LongPoolingTelegramBot {
 
-    @Autowired
-    LogBotController botLogger;
-    @Autowired
-    MainBotService mainBotService;
+    private final LogBotController botLogger;
+    private final MainBotService mainBotService;
 
-    @Autowired
     public MainBotController(@Value("${telegram-api.token.main}") String token,
-                              RestTemplate restTemplate) {
+                             RestTemplate restTemplate,
+                             LogBotController botLogger,
+                             MainBotService mainBotService) {
         super(token, 100, restTemplate);
+        this.botLogger = botLogger;
+        this.mainBotService = mainBotService;
     }
 
     private void sendAnswer(Object answer, Long chatId){ // kafka listener
@@ -41,4 +42,5 @@ public class MainBotController extends LongPoolingTelegramBot {
         Optional<SendMessage> answer = mainBotService.handleUpdate(update);
         answer.ifPresent(this::sendMessage);
     }
+
 }

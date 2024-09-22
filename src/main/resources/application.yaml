@@ -15,6 +15,7 @@ spring:
 
 telegram-api:
   log-chat-id: ${TELEGRAM_LOG_CHAT_ID}
+  admin-chat-id: ${TELEGRAM_ADMIN_CHAT_ID}
   token:
     main: ${TELEGRAM_MAIN_TOKEN}
     log: ${TELEGRAM_LOG_TOKEN}
@@ -23,6 +24,17 @@ telegram-api:
     main: ${TELEGRAM_MAIN_USERNAME}
     log: ${TELEGRAM_LOG_USERNAME}
     admin: ${TELEGRAM_ADMIN_USERNAME}
+
+#resilience4j:
+#  retry:
+#    instances:
+#      retrySendMessageToTelegram:
+#        max-attempts: 1
+#        wait-duration: 1s
+#        retry-exceptions:
+#          - java.lang.RuntimeException
+
+
 
 server:
   port: 8080
