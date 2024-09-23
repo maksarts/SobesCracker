@@ -1,10 +1,10 @@
 package ru.maksarts.sobescracker.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
+import ru.maksarts.sobescracker.constants.TgLogLevel;
 import ru.maksarts.sobescracker.dto.telegram.SendMessage;
 import ru.maksarts.sobescracker.dto.telegram.Update;
 import ru.maksarts.sobescracker.service.MainBotService;
@@ -38,9 +38,18 @@ public class MainBotController extends LongPoolingTelegramBot {
 
     @Override
     protected void handle(Update update) {
-        log.info("[MAIN] Update to handle: message=[{}]", update.getMessage());
-        Optional<SendMessage> answer = mainBotService.handleUpdate(update);
-        answer.ifPresent(this::sendMessage);
+        log.info("[MAIN] Update to handle=[{}]", update.toString());
+        try {
+
+            Optional<SendMessage> answer = mainBotService.handleUpdate(update);
+            answer.ifPresent(this::sendMessage);
+
+        } catch (Exception ex){
+            log.error("Cannot handle update: id={}: {}", update.getUpdate_id(), ex.getMessage(), ex);
+            botLogger.log(String.format("Cannot handle update: id=%s", update.getUpdate_id()),
+                    TgLogLevel.ERROR,
+                    ex);
+        }
     }
 
 }

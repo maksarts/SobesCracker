@@ -2,18 +2,20 @@ package ru.maksarts.sobescracker.service.tgcommands.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.network.Send;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import ru.maksarts.sobescracker.dto.telegram.From;
-import ru.maksarts.sobescracker.dto.telegram.Message;
 import ru.maksarts.sobescracker.dto.telegram.SendMessage;
 import ru.maksarts.sobescracker.dto.telegram.Update;
+import ru.maksarts.sobescracker.dto.telegram.replymarkup.InlineKeyboardButton;
+import ru.maksarts.sobescracker.dto.telegram.replymarkup.InlineKeyboardMarkup;
+import ru.maksarts.sobescracker.dto.telegram.replymarkup.ReplyMarkup;
 import ru.maksarts.sobescracker.model.TgUser;
 import ru.maksarts.sobescracker.repository.TgUserRepository;
 import ru.maksarts.sobescracker.service.tgcommands.MainBotTgCommandHandler;
+import ru.maksarts.sobescracker.service.tgcommands.TgCommandHandler;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -32,12 +34,11 @@ public class StartMainBotTgCommandHandler implements MainBotTgCommandHandler {
 
     @Override
     public Optional<SendMessage> handle(Update update) {
-        log.info("command {} invoked", START);
-        Message message = update.getMessage();
-        From from = message.getFrom();
+        From from = update.getMessage() != null ? update.getMessage().getFrom() : update.getCallback_query().getFrom();
+        Long chatId = update.getChatIdFrom();
 
         TgUser user = TgUser.builder()
-                .chatId(message.getChat().getId())
+                .chatId(chatId)
                 .nickname(from.getUsername())
                 .name(String.format("%s %s",from.getFirst_name(), from.getLast_name()))
                 .build();
@@ -48,19 +49,30 @@ public class StartMainBotTgCommandHandler implements MainBotTgCommandHandler {
         }
 
         SendMessage answer = SendMessage.builder()
-                .text(buildAnswer(update))
+                .text(buildHello(update))
+                .reply_markup(buildReplyMarkup())
                 .chat_id(update.getMessage().getChat().getId().toString())
                 .build();
 
         return Optional.ofNullable(answer);
     }
 
-    private String buildAnswer(Update update){
+    private String buildHello(Update update){
         String name = update.getMessage().getFrom().getFirst_name();
         String hello = String.format(
                 messages.getMessage("start.hello", null, Locale.forLanguageTag("ru-RU")),
                 name);
-        String commands = messages.getMessage("commands.list", null, Locale.forLanguageTag("ru-RU"));
-        return hello + "\n\n" + commands;
+        return hello;
+    }
+
+    private ReplyMarkup buildReplyMarkup(){
+        InlineKeyboardButton button = InlineKeyboardButton.builder()
+                .text(messages.getMessage("start.courses", null, Locale.forLanguageTag("ru-RU")))
+                .callback_data(TgCommandHandler.COURSES)
+                .build();
+
+        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
+        keyboardMarkup.addRow(List.of(button));
+        return keyboardMarkup;
     }
 }

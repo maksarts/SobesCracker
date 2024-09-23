@@ -86,9 +86,9 @@ public abstract class LongPoolingTelegramBot {
                     log.trace("Incoming update: {}", update.toString());
 
                     ifCommand(update);
+                    setChatId(update);
 
                     try {
-
                         // handle
                         handle(update);
 
@@ -111,13 +111,24 @@ public abstract class LongPoolingTelegramBot {
         if(update.getMessage() != null){
             Message message = update.getMessage();
             String text = message.getText();
-            if(text.startsWith("/")){
-                message.setIsCommand(true);
-            } else{
-                message.setIsCommand(false);
-            }
+            message.setIsCommand(text.startsWith("/"));
+        }
+        if (update.getCallback_query() != null) {
+            CallbackQuery callbackQuery = update.getCallback_query();
+            String text = callbackQuery.getData();
+            callbackQuery.setIsCommand(text.startsWith("/"));
         }
     }
+
+    private void setChatId(Update update){
+        if (update.getMessage() != null){
+            update.setChatIdFrom(update.getMessage().getChat().getId());
+        }
+        if(update.getCallback_query() != null){
+            update.setChatIdFrom(update.getCallback_query().getMessage().getChat().getId());
+        }
+    }
+
 
 
     protected ResponseEntity<?> sendMessage(String text, String chatId, TgFormat parseMode){
@@ -149,6 +160,8 @@ public abstract class LongPoolingTelegramBot {
     }
 
     protected ResponseEntity<?> sendMessage(SendMessage msg){
+        log.info("Message to send:\n{}", msg);
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setContentLanguage(Locale.forLanguageTag("ru-RU"));

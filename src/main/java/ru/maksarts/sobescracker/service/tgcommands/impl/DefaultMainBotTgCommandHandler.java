@@ -21,7 +21,7 @@ public class DefaultMainBotTgCommandHandler implements MainBotTgCommandHandler {
     @Override
     public Optional<SendMessage> handle(Update update) {
         //TODO
-        log.info("Unknown command [{}]", update.getMessage().getText().toLowerCase().trim());
+        log.info("Unknown command, update={}", update.toString());
         return Optional.empty();
     }
 }

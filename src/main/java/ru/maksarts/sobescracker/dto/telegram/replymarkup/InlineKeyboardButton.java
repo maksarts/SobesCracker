@@ -1,4 +1,4 @@
-package ru.maksarts.sobescracker.dto.telegram;
+package ru.maksarts.sobescracker.dto.telegram.replymarkup;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
-import ru.maksarts.sobescracker.dto.telegram.replymarkup.ReplyMarkup;
+import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 
@@ -15,16 +15,13 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SendMessage implements Serializable {
+public class InlineKeyboardButton implements Serializable {
     @NonNull
     private String text;
 
-    @NonNull
-    private String chat_id;
+    @Nullable
+    private String url;
 
-    private String parse_mode;
-
-    private ReplyParameters reply_parameters;
-
-    private ReplyMarkup reply_markup;
+    @Nullable
+    private String callback_data;
 }
