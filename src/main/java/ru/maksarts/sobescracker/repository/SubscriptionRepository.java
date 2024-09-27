@@ -14,4 +14,6 @@ import java.util.UUID;
 public interface SubscriptionRepository extends JpaRepository<Subscription, UUID> {
     List<Subscription> getSubscriptionByTgUser(TgUser tgUser);
     List<Subscription> getSubscriptionByCourse(Course course);
+
+    Optional<Subscription> getSubscriptionByTgUserAndCourse(TgUser tgUser, Course course);
 }
