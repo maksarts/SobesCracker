@@ -56,7 +56,8 @@ public class MainBotService {
 
 
     private Optional<SendMessage> handleCommand(String command, Update update){
-        return commandHandlers.getOrDefault(command, defaultCommandHandler).handle(update);
+        String mainCommand = command.split(" ")[0];
+        return commandHandlers.getOrDefault(mainCommand, defaultCommandHandler).handle(update);
     }
 
 }

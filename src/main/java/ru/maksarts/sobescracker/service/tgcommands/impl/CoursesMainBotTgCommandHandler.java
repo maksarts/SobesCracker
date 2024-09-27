@@ -2,6 +2,9 @@ package ru.maksarts.sobescracker.service.tgcommands.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.maksarts.sobescracker.constants.TgFormat;
 import ru.maksarts.sobescracker.dto.telegram.SendMessage;
@@ -31,18 +34,32 @@ public class CoursesMainBotTgCommandHandler implements MainBotTgCommandHandler {
 
     @Override
     public Optional<SendMessage> handle(Update update) {
-        List<Course> courses = courseRepository.findAll();
+        int nextPage = 0;
+        if(update.getCallback_query() != null){
+            String[] data = update.getCallback_query().getData().split(" ");
+            if(data.length > 1) nextPage = Integer.parseInt(data[1]);
+        }
 
         Long chatId = update.getChatIdFrom();
 
-        SendMessage msg = SendMessage.builder()
-                .text(buildAnswer(courses))
-                .chat_id(chatId.toString())
-                .parse_mode(TgFormat.PARSE_MODE_HTML.getTag())
-                .reply_markup(buildReplyMarkup())
-                .build();
+        Page<Course> courses = courseRepository.findAll(
+                PageRequest.of(nextPage, 1, Sort.by("name").ascending()));
 
-        return Optional.ofNullable(msg);
+        if(courses.stream().findFirst().isPresent()) {
+            Course course = courses.stream().findFirst().get();
+
+            String text = buildAnswer(List.of(course));
+            ReplyMarkup replyMarkup = buildReplyMarkup(nextPage, course);
+            SendMessage msg = SendMessage.builder()
+                    .text(text)
+                    .chat_id(chatId.toString())
+                    .parse_mode(TgFormat.PARSE_MODE_HTML.getTag())
+                    .reply_markup(replyMarkup)
+                    .build();
+
+            return Optional.ofNullable(msg);
+        }
+        return Optional.empty();
     }
 
     private String buildAnswer(List<Course> courses){
@@ -55,20 +72,30 @@ public class CoursesMainBotTgCommandHandler implements MainBotTgCommandHandler {
         return builder.toString();
     }
 
-    private ReplyMarkup buildReplyMarkup(){
+    private ReplyMarkup buildReplyMarkup(int nextPage, Course course){
         InlineKeyboardButton subscribeButton = InlineKeyboardButton.builder()
-                .text(messages.getMessage("courses.subscribe", null, Locale.forLanguageTag("ru-RU")))
-                .callback_data("/todo") //TODO
+                .text(messages.getMessage("course.subscribe", null, Locale.forLanguageTag("ru-RU")))
+                .callback_data(SUBSCRIBE + " " + course.getId().toString())
                 .build();
 
         InlineKeyboardButton studyButton = InlineKeyboardButton.builder()
-                .text(messages.getMessage("courses.startStudy", null, Locale.forLanguageTag("ru-RU")))
-                .callback_data("/todo") //TODO
+                .text(messages.getMessage("course.startStudy", null, Locale.forLanguageTag("ru-RU")))
+                .callback_data(STUDY + " " + course.getId().toString())
+                .build();
+
+        InlineKeyboardButton prevButton = InlineKeyboardButton.builder()
+                .text(messages.getMessage("move.previous", null, Locale.forLanguageTag("ru-RU")))
+                .callback_data(COURSES + " " + (Math.max(nextPage - 1, 0)))
+                .build();
+
+        InlineKeyboardButton nextButton = InlineKeyboardButton.builder()
+                .text(messages.getMessage("move.next", null, Locale.forLanguageTag("ru-RU")))
+                .callback_data(COURSES + " " + (nextPage + 1))
                 .build();
 
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
-        keyboardMarkup.addRow(List.of(subscribeButton));
-        keyboardMarkup.addRow(List.of(studyButton));
+        keyboardMarkup.addRow(List.of(subscribeButton, studyButton));
+        keyboardMarkup.addRow(List.of(prevButton, nextButton));
         return keyboardMarkup;
     }
 }

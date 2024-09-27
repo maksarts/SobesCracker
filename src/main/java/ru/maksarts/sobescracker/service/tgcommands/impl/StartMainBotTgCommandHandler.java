@@ -66,13 +66,25 @@ public class StartMainBotTgCommandHandler implements MainBotTgCommandHandler {
     }
 
     private ReplyMarkup buildReplyMarkup(){
-        InlineKeyboardButton button = InlineKeyboardButton.builder()
+        InlineKeyboardButton coursesButton = InlineKeyboardButton.builder()
                 .text(messages.getMessage("start.courses", null, Locale.forLanguageTag("ru-RU")))
                 .callback_data(TgCommandHandler.COURSES)
                 .build();
 
+        InlineKeyboardButton subscriptionsButton = InlineKeyboardButton.builder()
+                .text(messages.getMessage("start.subscriptions", null, Locale.forLanguageTag("ru-RU")))
+                .callback_data(TgCommandHandler.SUBSCRIPTIONS)
+                .build();
+
+        InlineKeyboardButton studyButton = InlineKeyboardButton.builder()
+                .text(messages.getMessage("start.study", null, Locale.forLanguageTag("ru-RU")))
+                .callback_data(TgCommandHandler.STUDY)
+                .build();
+
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
-        keyboardMarkup.addRow(List.of(button));
+        keyboardMarkup.addRow(List.of(coursesButton));
+        keyboardMarkup.addRow(List.of(subscriptionsButton));
+        keyboardMarkup.addRow(List.of(studyButton));
         return keyboardMarkup;
     }
 }
