@@ -13,5 +13,6 @@ public interface TgCommandHandler {
     String COURSES = "/courses";
     String SUBSCRIPTIONS = "/subscriptions";
     String SUBSCRIBE = "/subscribe";
+    String UNSUBSCRIBE = "/unsubscribe";
     String STUDY = "/study";
 }

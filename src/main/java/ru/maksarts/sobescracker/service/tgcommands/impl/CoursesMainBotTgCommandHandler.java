@@ -7,18 +7,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.maksarts.sobescracker.constants.TgFormat;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.DeleteMessage;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.SendMessage;
 import ru.maksarts.sobescracker.dto.telegram.Update;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.UpdateHandlerResult;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.InlineKeyboardButton;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.InlineKeyboardMarkup;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.ReplyMarkup;
+import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.DeleteMessage;
+import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.SendMessage;
+import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.UpdateHandlerResult;
 import ru.maksarts.sobescracker.model.Course;
 import ru.maksarts.sobescracker.repository.CourseRepository;
 import ru.maksarts.sobescracker.service.tgcommands.MainBotTgCommandHandler;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -36,7 +36,7 @@ public class CoursesMainBotTgCommandHandler implements MainBotTgCommandHandler {
 
     @Override
     public List<UpdateHandlerResult> handle(Update update) {
-        List<UpdateHandlerResult> updateHandlerResultList = new ArrayList<>();
+        LinkedList<UpdateHandlerResult> updateHandlerResultList = new LinkedList<>();
 
         int nextPage = 0;
         Integer chatId = update.getChatIdFrom();
@@ -69,7 +69,7 @@ public class CoursesMainBotTgCommandHandler implements MainBotTgCommandHandler {
                     .reply_markup(replyMarkup)
                     .build();
 
-            updateHandlerResultList.add(msg);
+            updateHandlerResultList.addFirst(msg);
 
             return updateHandlerResultList;
         }
@@ -92,6 +92,11 @@ public class CoursesMainBotTgCommandHandler implements MainBotTgCommandHandler {
                 .callback_data(SUBSCRIBE + " " + course.getId().toString())
                 .build();
 
+        InlineKeyboardButton unsubscribeButton = InlineKeyboardButton.builder()
+                .text(messages.getMessage("course.unsubscribe", null, Locale.forLanguageTag("ru-RU")))
+                .callback_data(UNSUBSCRIBE + " " + course.getId().toString())
+                .build();
+
         InlineKeyboardButton studyButton = InlineKeyboardButton.builder()
                 .text(messages.getMessage("course.startStudy", null, Locale.forLanguageTag("ru-RU")))
                 .callback_data(STUDY + " " + course.getId().toString())
@@ -108,7 +113,9 @@ public class CoursesMainBotTgCommandHandler implements MainBotTgCommandHandler {
                 .build();
 
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
-        keyboardMarkup.addRow(List.of(subscribeButton, studyButton));
+        keyboardMarkup.addRow(List.of(subscribeButton));
+        keyboardMarkup.addRow(List.of(studyButton));
+        keyboardMarkup.addRow(List.of(unsubscribeButton));
         keyboardMarkup.addRow(List.of(prevButton, nextButton));
         return keyboardMarkup;
     }
