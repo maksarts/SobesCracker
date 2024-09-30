@@ -5,8 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import ru.maksarts.sobescracker.dto.telegram.From;
-import ru.maksarts.sobescracker.dto.telegram.SendMessage;
+import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.SendMessage;
 import ru.maksarts.sobescracker.dto.telegram.Update;
+import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.UpdateHandlerResult;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.InlineKeyboardButton;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.InlineKeyboardMarkup;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.ReplyMarkup;
@@ -17,7 +18,6 @@ import ru.maksarts.sobescracker.service.tgcommands.TgCommandHandler;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -33,9 +33,9 @@ public class StartMainBotTgCommandHandler implements MainBotTgCommandHandler {
     }
 
     @Override
-    public Optional<SendMessage> handle(Update update) {
+    public List<UpdateHandlerResult> handle(Update update) {
         From from = update.getMessage() != null ? update.getMessage().getFrom() : update.getCallback_query().getFrom();
-        Long chatId = update.getChatIdFrom();
+        Integer chatId = update.getChatIdFrom();
 
         TgUser user = TgUser.builder()
                 .chatId(chatId)
@@ -54,7 +54,7 @@ public class StartMainBotTgCommandHandler implements MainBotTgCommandHandler {
                 .chat_id(update.getMessage().getChat().getId().toString())
                 .build();
 
-        return Optional.ofNullable(answer);
+        return List.of(answer);
     }
 
     private String buildHello(Update update){

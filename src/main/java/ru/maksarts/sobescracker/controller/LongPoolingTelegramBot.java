@@ -13,6 +13,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import ru.maksarts.sobescracker.constants.TgFormat;
 import ru.maksarts.sobescracker.constants.TgRequestMethod;
 import ru.maksarts.sobescracker.dto.telegram.*;
+import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.DeleteMessage;
+import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.SendMessage;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,8 +35,10 @@ public abstract class LongPoolingTelegramBot {
     protected Integer limit;
 
     protected RestTemplate restTemplate;
+
     protected String getUpdatesUrl;
     protected String sendMessageUrl;
+    protected String deleteMessageUrl;
 
     /**
      *
@@ -59,6 +63,9 @@ public abstract class LongPoolingTelegramBot {
                 .toUriString();
 
         sendMessageUrl = UriComponentsBuilder.fromHttpUrl(apiUrl + TgRequestMethod.SEND_MESSAGE)
+                .toUriString();
+
+        deleteMessageUrl = UriComponentsBuilder.fromHttpUrl(apiUrl + TgRequestMethod.DELETE_MESSAGE)
                 .toUriString();
     }
 
@@ -167,5 +174,15 @@ public abstract class LongPoolingTelegramBot {
         headers.setContentLanguage(Locale.forLanguageTag("ru-RU"));
         HttpEntity<SendMessage> request = new HttpEntity<>(msg, headers);
         return restTemplate.postForEntity(sendMessageUrl, request, String.class);
+    }
+
+    protected ResponseEntity<?> deleteMessage(DeleteMessage msg){
+        log.info("Message to delete:\n{}", msg);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setContentLanguage(Locale.forLanguageTag("ru-RU"));
+        HttpEntity<DeleteMessage> request = new HttpEntity<>(msg, headers);
+        return restTemplate.postForEntity(deleteMessageUrl, request, String.class);
     }
 }

@@ -8,7 +8,7 @@ import java.io.Serializable;
 @Data
 public class Chat implements Serializable {
     private String first_name;
-    private Long id;
+    private Integer id;
     private String last_name;
     private String type;
     private String username;

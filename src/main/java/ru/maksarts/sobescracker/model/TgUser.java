@@ -34,7 +34,7 @@ public class TgUser implements Serializable {
     private String name;
 
     @Column(name = "chat_id", nullable = false)
-    private Long chatId;
+    private Integer chatId;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", nullable = false, updatable = false)

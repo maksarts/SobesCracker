@@ -1,21 +1,20 @@
-package ru.maksarts.sobescracker.dto.telegram;
+package ru.maksarts.sobescracker.dto.telegram.updatehandleresult;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
+import ru.maksarts.sobescracker.dto.telegram.ReplyParameters;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.ReplyMarkup;
 
 import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SendMessage implements Serializable {
+public class SendMessage implements Serializable, UpdateHandlerResult {
     @NonNull
     private String text;
 

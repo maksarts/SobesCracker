@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 import ru.maksarts.sobescracker.constants.TgFormat;
 import ru.maksarts.sobescracker.constants.TgLogLevel;
-import ru.maksarts.sobescracker.dto.telegram.SendMessage;
 import ru.maksarts.sobescracker.dto.telegram.Update;
 
 import java.util.HashMap;

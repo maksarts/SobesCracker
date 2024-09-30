@@ -7,8 +7,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.maksarts.sobescracker.constants.TgFormat;
-import ru.maksarts.sobescracker.dto.telegram.SendMessage;
+import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.DeleteMessage;
+import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.SendMessage;
 import ru.maksarts.sobescracker.dto.telegram.Update;
+import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.UpdateHandlerResult;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.InlineKeyboardButton;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.InlineKeyboardMarkup;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.ReplyMarkup;
@@ -16,9 +18,9 @@ import ru.maksarts.sobescracker.model.Course;
 import ru.maksarts.sobescracker.repository.CourseRepository;
 import ru.maksarts.sobescracker.service.tgcommands.MainBotTgCommandHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,14 +35,24 @@ public class CoursesMainBotTgCommandHandler implements MainBotTgCommandHandler {
     }
 
     @Override
-    public Optional<SendMessage> handle(Update update) {
+    public List<UpdateHandlerResult> handle(Update update) {
+        List<UpdateHandlerResult> updateHandlerResultList = new ArrayList<>();
+
         int nextPage = 0;
+        Integer chatId = update.getChatIdFrom();
+
         if(update.getCallback_query() != null){
             String[] data = update.getCallback_query().getData().split(" ");
-            if(data.length > 1) nextPage = Integer.parseInt(data[1]);
-        }
+            if(data.length > 1) {
+                nextPage = Integer.parseInt(data[1]);
 
-        Long chatId = update.getChatIdFrom();
+                updateHandlerResultList.add(
+                        DeleteMessage.builder()
+                                .chat_id(chatId)
+                                .message_id(update.getCallback_query().getMessage().getMessage_id())
+                                .build());
+            }
+        }
 
         Page<Course> courses = courseRepository.findAll(
                 PageRequest.of(nextPage, 1, Sort.by("name").ascending()));
@@ -57,9 +69,11 @@ public class CoursesMainBotTgCommandHandler implements MainBotTgCommandHandler {
                     .reply_markup(replyMarkup)
                     .build();
 
-            return Optional.ofNullable(msg);
+            updateHandlerResultList.add(msg);
+
+            return updateHandlerResultList;
         }
-        return Optional.empty();
+        return null;
     }
 
     private String buildAnswer(List<Course> courses){

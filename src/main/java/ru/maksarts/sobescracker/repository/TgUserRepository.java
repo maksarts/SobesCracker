@@ -7,6 +7,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface TgUserRepository extends JpaRepository<TgUser, UUID> {
-    Optional<TgUser> getTgUserByChatId(Long chatId);
-    Boolean existsByChatId(Long chatId);
+    Optional<TgUser> getTgUserByChatId(Integer chatId);
+    Boolean existsByChatId(Integer chatId);
 }

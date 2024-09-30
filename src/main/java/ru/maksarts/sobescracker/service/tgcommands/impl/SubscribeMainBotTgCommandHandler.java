@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import ru.maksarts.sobescracker.dto.telegram.*;
+import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.SendMessage;
+import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.UpdateHandlerResult;
 import ru.maksarts.sobescracker.model.Course;
 import ru.maksarts.sobescracker.model.Subscription;
 import ru.maksarts.sobescracker.model.TgUser;
@@ -12,8 +14,8 @@ import ru.maksarts.sobescracker.repository.SubscriptionRepository;
 import ru.maksarts.sobescracker.repository.TgUserRepository;
 import ru.maksarts.sobescracker.service.tgcommands.MainBotTgCommandHandler;
 
+import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -32,9 +34,9 @@ public class SubscribeMainBotTgCommandHandler implements MainBotTgCommandHandler
     }
 
     @Override
-    public Optional<SendMessage> handle(Update update) {
+    public List<UpdateHandlerResult> handle(Update update) {
         CallbackQuery callbackQuery = update.getCallback_query();
-        Long chatId = update.getChatIdFrom();
+        Integer chatId = update.getChatIdFrom();
 
         if(callbackQuery != null){
             From from = callbackQuery.getFrom();
@@ -59,11 +61,11 @@ public class SubscribeMainBotTgCommandHandler implements MainBotTgCommandHandler
                                         .build());
                     subscriptionRepository.save(subscription);
                     SendMessage msg = makeAnswerMessage(course, chatId.toString());
-                    return Optional.ofNullable(msg);
+                    return List.of(msg);
                 }
             }
         }
-        return Optional.empty();
+        return null;
     }
 
     private SendMessage makeAnswerMessage(Course course, String chatId){
