@@ -29,10 +29,6 @@ public class MainBotController extends LongPoolingTelegramBot {
         this.mainBotService = mainBotService;
     }
 
-    private void sendAnswer(Object answer, Long chatId){ // kafka listener
-        // send answer
-    }
-
     private void sendOnSubscription(Object answer, Long chatId){ // kafka listener
         // send answer
     }
@@ -44,6 +40,7 @@ public class MainBotController extends LongPoolingTelegramBot {
         try {
 
             List<UpdateHandlerResult> updateHandlerResultList = mainBotService.handleUpdate(update);
+
             if(updateHandlerResultList != null){
                 updateHandlerResultList.forEach(updateHandlerResult -> {
 
