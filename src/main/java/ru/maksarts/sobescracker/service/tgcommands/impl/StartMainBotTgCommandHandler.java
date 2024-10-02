@@ -5,16 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import ru.maksarts.sobescracker.dto.telegram.From;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.SendMessage;
 import ru.maksarts.sobescracker.dto.telegram.Update;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.UpdateHandlerResult;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.InlineKeyboardButton;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.InlineKeyboardMarkup;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.ReplyMarkup;
+import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.SendMessage;
+import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.UpdateHandlerResult;
 import ru.maksarts.sobescracker.model.TgUser;
 import ru.maksarts.sobescracker.repository.TgUserRepository;
 import ru.maksarts.sobescracker.service.tgcommands.MainBotTgCommandHandler;
-import ru.maksarts.sobescracker.service.tgcommands.TgCommandHandler;
 
 import java.util.List;
 import java.util.Locale;
@@ -68,17 +67,17 @@ public class StartMainBotTgCommandHandler implements MainBotTgCommandHandler {
     private ReplyMarkup buildReplyMarkup(){
         InlineKeyboardButton coursesButton = InlineKeyboardButton.builder()
                 .text(messages.getMessage("start.courses", null, Locale.forLanguageTag("ru-RU")))
-                .callback_data(TgCommandHandler.COURSES)
+                .callback_data(COURSES)
                 .build();
 
         InlineKeyboardButton subscriptionsButton = InlineKeyboardButton.builder()
                 .text(messages.getMessage("start.subscriptions", null, Locale.forLanguageTag("ru-RU")))
-                .callback_data(TgCommandHandler.SUBSCRIPTIONS)
+                .callback_data(SUBSCRIPTIONS)
                 .build();
 
         InlineKeyboardButton studyButton = InlineKeyboardButton.builder()
                 .text(messages.getMessage("start.study", null, Locale.forLanguageTag("ru-RU")))
-                .callback_data(TgCommandHandler.STUDY)
+                .callback_data(STUDY)
                 .build();
 
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();

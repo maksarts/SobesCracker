@@ -18,6 +18,7 @@ import java.util.UUID;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Settings implements Serializable {
     @Id
     @UuidGenerator

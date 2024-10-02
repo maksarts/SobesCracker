@@ -6,12 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class Setting implements Serializable {
-    private QuestionGrade grade;
-    private String type;
+    private UUID currentCourse;
+    private Integer lastPage;
 }

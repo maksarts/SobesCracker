@@ -85,7 +85,7 @@ public class SubscriptionsMainBotTgCommandHandler implements MainBotTgCommandHan
     private ReplyMarkup buildReplyMarkup(){
         InlineKeyboardButton coursesButton = InlineKeyboardButton.builder()
                 .text(messages.getMessage("start.courses", null, Locale.forLanguageTag("ru-RU")))
-                .callback_data(TgCommandHandler.COURSES)
+                .callback_data(COURSES)
                 .build();
 
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();

@@ -46,7 +46,11 @@ public class Course  implements Serializable {
     private Integer maxGradeVal; // needed to correct representation ENUM values in DB
 
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY,
+                cascade = {
+                        CascadeType.REFRESH
+                }
+    )
     @Fetch(FetchMode.JOIN)
     @JoinTable(
             name = "course_type",

@@ -1,11 +1,10 @@
 package ru.maksarts.sobescracker.model;
 
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.annotations.*;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -41,7 +40,11 @@ public class TgUser implements Serializable {
     @CreationTimestamp
     private Date createdAt;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY,
+                cascade = {
+                            CascadeType.REFRESH
+                        }
+    )
     @Fetch(FetchMode.JOIN)
     @JoinTable(
             name = "excluded_question",
