@@ -7,15 +7,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.maksarts.sobescracker.constants.TgFormat;
+import ru.maksarts.sobescracker.constants.TgParseMode;
 import ru.maksarts.sobescracker.dto.telegram.From;
 import ru.maksarts.sobescracker.dto.telegram.Update;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.InlineKeyboardButton;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.InlineKeyboardMarkup;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.ReplyMarkup;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.DeleteMessage;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.SendMessage;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.UpdateHandlerResult;
+import ru.maksarts.sobescracker.dto.telegram.tgmethod.DeleteMessage;
+import ru.maksarts.sobescracker.dto.telegram.tgmethod.SendMessage;
+import ru.maksarts.sobescracker.dto.telegram.tgmethod.TgMethod;
 import ru.maksarts.sobescracker.model.*;
 import ru.maksarts.sobescracker.repository.CourseRepository;
 import ru.maksarts.sobescracker.repository.QuestionRepository;
@@ -43,7 +43,7 @@ public class StudyMainBotTgCommandHandler implements MainBotTgCommandHandler {
     }
 
     @Override
-    public List<UpdateHandlerResult> handle(Update update) {
+    public List<TgMethod> handle(Update update) {
         Integer chatId = update.getChatIdFrom();
 
         if(update.getMessage() != null){
@@ -81,7 +81,7 @@ public class StudyMainBotTgCommandHandler implements MainBotTgCommandHandler {
         return null;
     }
 
-    private List<UpdateHandlerResult> newStudy(Integer chatId, String courseId) {
+    private List<TgMethod> newStudy(Integer chatId, String courseId) {
         Course course = courseRepository.findById(UUID.fromString(courseId)).orElse(null);
         if(course != null){
             SendMessage startMessage = SendMessage.builder()
@@ -92,10 +92,10 @@ public class StudyMainBotTgCommandHandler implements MainBotTgCommandHandler {
                     ))
                     .build();
 
-            List<UpdateHandlerResult> startQuestion = nextQuestion(chatId, course, 0, null);
+            List<TgMethod> startQuestion = nextQuestion(chatId, course, 0, null);
 
             if(startQuestion != null && !startQuestion.isEmpty()) {
-                ArrayList<UpdateHandlerResult> result = new ArrayList<>();
+                ArrayList<TgMethod> result = new ArrayList<>();
                 result.add(startMessage);
                 result.addAll(startQuestion);
                 return result;
@@ -104,7 +104,7 @@ public class StudyMainBotTgCommandHandler implements MainBotTgCommandHandler {
         return null;
     }
 
-    private List<UpdateHandlerResult> continueStudy(Update update, Integer chatId) {
+    private List<TgMethod> continueStudy(Update update, Integer chatId) {
         From from = null;
         if(update.getMessage() != null){
             from = update.getMessage().getFrom();
@@ -123,7 +123,7 @@ public class StudyMainBotTgCommandHandler implements MainBotTgCommandHandler {
             Settings settings = settingsRepository.getSettingsByUserId(tgUser).orElse(null);
             if(settings != null){
 
-                // продолжить по настройкам
+                // continue by settings
                 Setting setting = settings.getSetting();
                 UUID courseId = setting.getCurrentCourse();
                 Integer lastPage = setting.getLastPage();
@@ -134,7 +134,7 @@ public class StudyMainBotTgCommandHandler implements MainBotTgCommandHandler {
 
             } else {
 
-                // нет начатых подготовок
+                // settings are empty
                 SendMessage msg = SendMessage.builder()
                         .chat_id(chatId.toString())
                         .text(messages.getMessage("study.emptysettings", null, Locale.forLanguageTag("ru-RU")))
@@ -148,7 +148,7 @@ public class StudyMainBotTgCommandHandler implements MainBotTgCommandHandler {
         return null;
     }
 
-    private List<UpdateHandlerResult> nextQuestion(Integer chatId, Course course, Integer page, Integer messageIdToDelete) {
+    private List<TgMethod> nextQuestion(Integer chatId, Course course, Integer page, Integer messageIdToDelete) {
         TgUser tgUser = tgUserRepository.getTgUserByChatId(chatId).orElse(null);
         if(tgUser != null){
 
@@ -163,7 +163,7 @@ public class StudyMainBotTgCommandHandler implements MainBotTgCommandHandler {
             Optional<Question> question = questions.get().findFirst();
             if(question.isPresent()){
 
-                List<UpdateHandlerResult> result = new ArrayList<>();
+                List<TgMethod> result = new ArrayList<>();
 
                 if(messageIdToDelete != null) {
                     DeleteMessage dm = DeleteMessage.builder()
@@ -176,7 +176,7 @@ public class StudyMainBotTgCommandHandler implements MainBotTgCommandHandler {
                 SendMessage msg = SendMessage.builder()
                         .chat_id(chatId.toString())
                         .text(buildQuestionMessage(question.get()))
-                        .parse_mode(TgFormat.PARSE_MODE_HTML.getTag())
+                        .parse_mode(TgParseMode.PARSE_MODE_HTML.getTag())
                         .reply_markup(buildQuestionReplyMarkup(page, question.get(), course))
                         .build();
 
@@ -226,7 +226,7 @@ public class StudyMainBotTgCommandHandler implements MainBotTgCommandHandler {
     private ReplyMarkup buildQuestionReplyMarkup(int page, Question question, Course course){
         InlineKeyboardButton answerButton = InlineKeyboardButton.builder()
                 .text(messages.getMessage("study.showanswer", null, Locale.forLanguageTag("ru-RU")))
-                .callback_data("/showAnswer" + " " + question.getId()) //TODO
+                .callback_data(ANSWER + " " + question.getId())
                 .build();
 
         InlineKeyboardButton excludeButton = InlineKeyboardButton.builder()

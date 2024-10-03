@@ -10,11 +10,13 @@ import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import ru.maksarts.sobescracker.constants.TgFormat;
+import ru.maksarts.sobescracker.constants.TgParseMode;
 import ru.maksarts.sobescracker.constants.TgRequestMethod;
 import ru.maksarts.sobescracker.dto.telegram.*;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.DeleteMessage;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.SendMessage;
+import ru.maksarts.sobescracker.dto.telegram.tgmethod.DeleteMessage;
+import ru.maksarts.sobescracker.dto.telegram.tgmethod.EditMessageText;
+import ru.maksarts.sobescracker.dto.telegram.tgmethod.SendMessage;
+import ru.maksarts.sobescracker.dto.telegram.tgmethod.TgMethod;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +41,7 @@ public abstract class LongPoolingTelegramBot {
     protected String getUpdatesUrl;
     protected String sendMessageUrl;
     protected String deleteMessageUrl;
+    protected String editMessageTextUrl;
 
     /**
      *
@@ -67,6 +70,9 @@ public abstract class LongPoolingTelegramBot {
 
         deleteMessageUrl = UriComponentsBuilder.fromHttpUrl(apiUrl + TgRequestMethod.DELETE_MESSAGE)
                 .toUriString();
+
+        editMessageTextUrl = UriComponentsBuilder.fromHttpUrl(apiUrl + TgRequestMethod.EDIT_MESSAGE_TEXT)
+                .toUriString();
     }
 
 
@@ -77,7 +83,7 @@ public abstract class LongPoolingTelegramBot {
 
 
     @Scheduled(fixedDelay = 10)
-    protected void getUpdates(){
+    private void getUpdates(){
         Map<String, Object> params = new HashMap<>();
         params.put("offset", lastReceivedUpdate + 1);
 
@@ -137,8 +143,27 @@ public abstract class LongPoolingTelegramBot {
     }
 
 
+    /**
+     * Execute Telegram method such as /sendMessage, /deleteMessage, etc.
+     * @param tgMethod method to execute
+     * @return
+     */
+    protected ResponseEntity<?> execute(TgMethod tgMethod){
+        if(tgMethod instanceof SendMessage){
+            return sendMessage((SendMessage) tgMethod);
+        }
+        else if (tgMethod instanceof DeleteMessage) {
+            return deleteMessage((DeleteMessage) tgMethod);
+        }
+        else if (tgMethod instanceof EditMessageText) {
+            return editMessageText((EditMessageText) tgMethod);
+        }
+        return null;
+    }
 
-    protected ResponseEntity<?> sendMessage(String text, String chatId, TgFormat parseMode){
+
+
+    protected ResponseEntity<?> sendMessage(String text, String chatId, TgParseMode parseMode){
         return sendMessage(text, chatId, parseMode, null);
     }
     protected ResponseEntity<?> sendMessage(String text, String chatId, Integer replyMessageId){
@@ -147,7 +172,7 @@ public abstract class LongPoolingTelegramBot {
     protected ResponseEntity<?> sendMessage(String text, String chatId){
         return sendMessage(text, chatId, null, null);
     }
-    protected ResponseEntity<?> sendMessage(String text, String chatId, TgFormat parseMode, Integer replyMessageId){
+    protected ResponseEntity<?> sendMessage(String text, String chatId, TgParseMode parseMode, Integer replyMessageId){
         ReplyParameters replyParameters = null;
         if(replyMessageId != null){
             replyParameters = ReplyParameters.builder()
@@ -166,7 +191,7 @@ public abstract class LongPoolingTelegramBot {
         return sendMessage(msg);
     }
 
-    protected ResponseEntity<?> sendMessage(SendMessage msg){
+    private ResponseEntity<?> sendMessage(SendMessage msg){
         log.info("Message to send:\n{}", msg);
 
         HttpHeaders headers = new HttpHeaders();
@@ -176,7 +201,7 @@ public abstract class LongPoolingTelegramBot {
         return restTemplate.postForEntity(sendMessageUrl, request, String.class);
     }
 
-    protected ResponseEntity<?> deleteMessage(DeleteMessage msg){
+    private ResponseEntity<?> deleteMessage(DeleteMessage msg){
         log.info("Message to delete:\n{}", msg);
 
         HttpHeaders headers = new HttpHeaders();
@@ -184,5 +209,15 @@ public abstract class LongPoolingTelegramBot {
         headers.setContentLanguage(Locale.forLanguageTag("ru-RU"));
         HttpEntity<DeleteMessage> request = new HttpEntity<>(msg, headers);
         return restTemplate.postForEntity(deleteMessageUrl, request, String.class);
+    }
+
+    private ResponseEntity<?> editMessageText(EditMessageText msg){
+        log.info("Message to edit:\n{}", msg);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setContentLanguage(Locale.forLanguageTag("ru-RU"));
+        HttpEntity<EditMessageText> request = new HttpEntity<>(msg, headers);
+        return restTemplate.postForEntity(editMessageTextUrl, request, String.class);
     }
 }

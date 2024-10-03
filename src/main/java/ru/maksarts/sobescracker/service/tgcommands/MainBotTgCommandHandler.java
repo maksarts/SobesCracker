@@ -15,4 +15,5 @@ public interface MainBotTgCommandHandler extends TgCommandHandler{
     String SUBSCRIBE = "/subscribe";
     String UNSUBSCRIBE = "/unsubscribe";
     String STUDY = "/study";
+    String ANSWER = "/answer";
 }

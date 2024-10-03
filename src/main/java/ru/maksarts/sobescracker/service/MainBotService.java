@@ -2,7 +2,7 @@ package ru.maksarts.sobescracker.service;
 
 import org.springframework.stereotype.Service;
 import ru.maksarts.sobescracker.dto.telegram.*;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.UpdateHandlerResult;
+import ru.maksarts.sobescracker.dto.telegram.tgmethod.TgMethod;
 import ru.maksarts.sobescracker.service.tgcommands.MainBotTgCommandHandler;
 import ru.maksarts.sobescracker.service.tgcommands.impl.DefaultMainBotTgCommandHandler;
 
@@ -28,7 +28,7 @@ public class MainBotService {
      * @param update incoming update
      * @return Optional<> object. If .isPresent() contains message to send as answer
      */
-    public List<UpdateHandlerResult> handleUpdate(Update update){
+    public List<TgMethod> handleUpdate(Update update){
         if(update.getMessage() != null){
             return handleMessage(update.getMessage(), update);
         } else if (update.getCallback_query() != null) {
@@ -38,14 +38,14 @@ public class MainBotService {
     }
 
 
-    private List<UpdateHandlerResult> handleMessage(Message message, Update update){
+    private List<TgMethod> handleMessage(Message message, Update update){
         if(message.getIsCommand()) {
             return handleCommand(message.getText().toLowerCase().trim(), update);
         }
         return null;
     }
 
-    private List<UpdateHandlerResult> handleCallbackQuery(CallbackQuery callbackQuery, Update update){
+    private List<TgMethod> handleCallbackQuery(CallbackQuery callbackQuery, Update update){
         if(callbackQuery.getIsCommand()) {
             return handleCommand(callbackQuery.getData().toLowerCase().trim(), update);
         }
@@ -53,7 +53,7 @@ public class MainBotService {
     }
 
 
-    private List<UpdateHandlerResult> handleCommand(String command, Update update){
+    private List<TgMethod> handleCommand(String command, Update update){
         String mainCommand = command.split(" ")[0];
         return commandHandlers.getOrDefault(mainCommand, defaultCommandHandler).handle(update);
     }

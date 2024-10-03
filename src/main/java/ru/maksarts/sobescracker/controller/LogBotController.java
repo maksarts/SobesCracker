@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
-import ru.maksarts.sobescracker.constants.TgFormat;
+import ru.maksarts.sobescracker.constants.TgParseMode;
 import ru.maksarts.sobescracker.constants.TgLogLevel;
 import ru.maksarts.sobescracker.dto.telegram.Update;
 
@@ -65,12 +65,12 @@ public class LogBotController extends LongPoolingTelegramBot {
             sendMessage(
                     String.format(okTemplate, level.name(), text),
                     logChatId,
-                    TgFormat.PARSE_MODE_MARKDOWN);
+                    TgParseMode.PARSE_MODE_MARKDOWN);
         } else{
             sendMessage(
                     String.format(exceptionTemplate, level.name(), text, ex.getMessage()),
                     logChatId,
-                    TgFormat.PARSE_MODE_MARKDOWN);
+                    TgParseMode.PARSE_MODE_MARKDOWN);
         }
     }
 

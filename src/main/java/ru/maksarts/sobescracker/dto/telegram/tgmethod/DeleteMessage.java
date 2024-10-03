@@ -1,4 +1,4 @@
-package ru.maksarts.sobescracker.dto.telegram.updatehandleresult;
+package ru.maksarts.sobescracker.dto.telegram.tgmethod;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @Builder
-public class DeleteMessage implements Serializable, UpdateHandlerResult {
+public class DeleteMessage implements Serializable, TgMethod {
     @NonNull
     private Integer chat_id;
 

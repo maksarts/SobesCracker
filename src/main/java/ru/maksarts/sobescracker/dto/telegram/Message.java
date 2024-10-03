@@ -2,6 +2,7 @@
 package ru.maksarts.sobescracker.dto.telegram;
 
 import lombok.Data;
+import ru.maksarts.sobescracker.dto.telegram.replymarkup.InlineKeyboardMarkup;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -14,4 +15,5 @@ public class Message implements Serializable {
     private Integer message_id;
     private String text;
     private Boolean isCommand;
+    private InlineKeyboardMarkup reply_markup;
 }

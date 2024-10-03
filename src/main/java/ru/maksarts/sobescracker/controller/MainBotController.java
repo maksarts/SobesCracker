@@ -6,9 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 import ru.maksarts.sobescracker.constants.TgLogLevel;
 import ru.maksarts.sobescracker.dto.telegram.Update;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.DeleteMessage;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.SendMessage;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.UpdateHandlerResult;
+import ru.maksarts.sobescracker.dto.telegram.tgmethod.TgMethod;
 import ru.maksarts.sobescracker.service.MainBotService;
 
 import java.util.List;
@@ -39,19 +37,10 @@ public class MainBotController extends LongPoolingTelegramBot {
         log.info("[MAIN] Update to handle=[{}]", update.toString());
         try {
 
-            List<UpdateHandlerResult> updateHandlerResultList = mainBotService.handleUpdate(update);
+            List<TgMethod> tgMethodList = mainBotService.handleUpdate(update);
 
-            if(updateHandlerResultList != null){
-                updateHandlerResultList.forEach(updateHandlerResult -> {
-
-                    if(updateHandlerResult instanceof SendMessage){
-                        sendMessage((SendMessage) updateHandlerResult);
-                    }
-                    else if (updateHandlerResult instanceof DeleteMessage) {
-                        deleteMessage((DeleteMessage) updateHandlerResult);
-                    }
-
-                });
+            if(tgMethodList != null){
+                tgMethodList.forEach(this::execute);
             }
 
         } catch (Exception ex){

@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import ru.maksarts.sobescracker.dto.telegram.CallbackQuery;
 import ru.maksarts.sobescracker.dto.telegram.From;
 import ru.maksarts.sobescracker.dto.telegram.Update;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.SendMessage;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.UpdateHandlerResult;
+import ru.maksarts.sobescracker.dto.telegram.tgmethod.SendMessage;
+import ru.maksarts.sobescracker.dto.telegram.tgmethod.TgMethod;
 import ru.maksarts.sobescracker.model.Course;
 import ru.maksarts.sobescracker.model.Subscription;
 import ru.maksarts.sobescracker.model.TgUser;
@@ -36,7 +36,7 @@ public class UnsubscribeMainBotTgCommandHandler implements MainBotTgCommandHandl
     }
 
     @Override
-    public List<UpdateHandlerResult> handle(Update update) {
+    public List<TgMethod> handle(Update update) {
         CallbackQuery callbackQuery = update.getCallback_query();
         Integer chatId = update.getChatIdFrom();
 

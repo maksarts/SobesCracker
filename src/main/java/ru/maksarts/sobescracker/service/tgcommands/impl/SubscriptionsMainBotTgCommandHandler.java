@@ -3,20 +3,19 @@ package ru.maksarts.sobescracker.service.tgcommands.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import ru.maksarts.sobescracker.constants.TgFormat;
+import ru.maksarts.sobescracker.constants.TgParseMode;
 import ru.maksarts.sobescracker.dto.telegram.From;
 import ru.maksarts.sobescracker.dto.telegram.Update;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.InlineKeyboardButton;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.InlineKeyboardMarkup;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.ReplyMarkup;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.SendMessage;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.UpdateHandlerResult;
+import ru.maksarts.sobescracker.dto.telegram.tgmethod.SendMessage;
+import ru.maksarts.sobescracker.dto.telegram.tgmethod.TgMethod;
 import ru.maksarts.sobescracker.model.Subscription;
 import ru.maksarts.sobescracker.model.TgUser;
 import ru.maksarts.sobescracker.repository.SubscriptionRepository;
 import ru.maksarts.sobescracker.repository.TgUserRepository;
 import ru.maksarts.sobescracker.service.tgcommands.MainBotTgCommandHandler;
-import ru.maksarts.sobescracker.service.tgcommands.TgCommandHandler;
 
 import java.util.List;
 import java.util.Locale;
@@ -36,7 +35,7 @@ public class SubscriptionsMainBotTgCommandHandler implements MainBotTgCommandHan
     }
 
     @Override
-    public List<UpdateHandlerResult> handle(Update update) {
+    public List<TgMethod> handle(Update update) {
         Integer chatId = update.getChatIdFrom();
         From from = null;
 
@@ -71,7 +70,7 @@ public class SubscriptionsMainBotTgCommandHandler implements MainBotTgCommandHan
                 SendMessage msg = SendMessage.builder()
                         .chat_id(chatId.toString())
                         .text(buildAnswer(subscriptions))
-                        .parse_mode(TgFormat.PARSE_MODE_HTML.getTag())
+                        .parse_mode(TgParseMode.PARSE_MODE_HTML.getTag())
                         .reply_markup(buildReplyMarkup())
                         .build();
 

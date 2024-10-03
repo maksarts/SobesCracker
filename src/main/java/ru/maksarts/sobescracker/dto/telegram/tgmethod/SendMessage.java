@@ -1,4 +1,4 @@
-package ru.maksarts.sobescracker.dto.telegram.updatehandleresult;
+package ru.maksarts.sobescracker.dto.telegram.tgmethod;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SendMessage implements Serializable, UpdateHandlerResult {
+public class SendMessage implements Serializable, TgMethod {
     @NonNull
     private String text;
 

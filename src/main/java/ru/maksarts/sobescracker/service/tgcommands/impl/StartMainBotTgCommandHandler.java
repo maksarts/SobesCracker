@@ -9,8 +9,8 @@ import ru.maksarts.sobescracker.dto.telegram.Update;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.InlineKeyboardButton;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.InlineKeyboardMarkup;
 import ru.maksarts.sobescracker.dto.telegram.replymarkup.ReplyMarkup;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.SendMessage;
-import ru.maksarts.sobescracker.dto.telegram.updatehandleresult.UpdateHandlerResult;
+import ru.maksarts.sobescracker.dto.telegram.tgmethod.SendMessage;
+import ru.maksarts.sobescracker.dto.telegram.tgmethod.TgMethod;
 import ru.maksarts.sobescracker.model.TgUser;
 import ru.maksarts.sobescracker.repository.TgUserRepository;
 import ru.maksarts.sobescracker.service.tgcommands.MainBotTgCommandHandler;
@@ -32,7 +32,7 @@ public class StartMainBotTgCommandHandler implements MainBotTgCommandHandler {
     }
 
     @Override
-    public List<UpdateHandlerResult> handle(Update update) {
+    public List<TgMethod> handle(Update update) {
         From from = update.getMessage() != null ? update.getMessage().getFrom() : update.getCallback_query().getFrom();
         Integer chatId = update.getChatIdFrom();
 
